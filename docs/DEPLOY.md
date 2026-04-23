@@ -1,52 +1,47 @@
-# Deploy: Netlify (game) + Fly.io (lobby WebSocket)
+# Deploy: MOBA — Netlify (game) + Fly.io (lobby WebSocket)
 
-**MOBA fork:** Use **`docs/MOBA_HOSTING_SETUP.md`** for the MOBA-specific Git remote, Fly app **`moba-rooms`**, and Netlify site (**`moba.netlify.app`** target). This file is the generic split (Netlify static + Fly WSS).
+**Authoritative MOBA runbook (URLs + copy-paste commands):** [`docs/MOBA_HOSTING_SETUP.md`](./MOBA_HOSTING_SETUP.md).
 
-**Using Cursor / an AI agent?** See **`docs/DEPLOY_WITH_CURSOR.md`** for what to ask, which npm scripts to run, and login limitations.
+**Using Cursor / an AI agent?** [`docs/DEPLOY_WITH_CURSOR.md`](./DEPLOY_WITH_CURSOR.md).
 
-This doc locks the **transport and domain split** for IDLE-CRAFT: static **Vite** build on **Netlify**, **Node** room server on **Fly.io** with **WSS**. One HTML/JS origin, one WebSocket host.
+**IDLE-CRAFT** (sibling project in `idle deck`) uses different hosts (`idle-craft-rooms.fly.dev`, `idle-craft1.netlify.app`, etc.). This file describes **only** the MOBA repo.
 
 ## Quick reference
 
 | What | Where | Command / URL |
 |------|--------|----------------|
-| Room server | Fly app **`idle-craft-rooms`** | `npm run deploy:fly` or `cd server` → `fly deploy` |
-| Health | Same app | `https://idle-craft-rooms.fly.dev/health` → `ok` |
-| Game static | Netlify **`idle-crafting`** | `npm run build` → `netlify deploy --dir=dist --prod` |
-| Prod lobby URL (baked into build) | `netlify.toml` + `.env.production` | `wss://idle-craft-rooms.fly.dev` |
+| Room server | Fly app **`moba-rooms`** | `npm run deploy:fly` or `cd server` → `fly deploy` |
+| Health | Same app | `https://moba-rooms.fly.dev/health` → `ok` |
+| Game static | Netlify **`moba-magic-atoms`** | `npm run deploy:netlify` |
+| Production URL | — | **https://moba-magic-atoms.netlify.app** |
+| Prod lobby WSS | `netlify.toml` + `.env.production` + client fallback | **`wss://moba-rooms.fly.dev`** |
 
-**Order when you ship protocol or server changes:** deploy **Fly** first, then **Netlify** (so new clients talk to the new server). If you only change client UI, Netlify alone is enough.
+**Order when you ship protocol or server changes:** deploy **Fly** first, then **Netlify**. Client-only UI: Netlify alone.
 
 ## Architecture
 
 | Piece | Role | Host |
 |--------|------|------|
 | `npm run build` → `dist/` | Game client | Netlify (static) |
-| `server/room-server.mjs` | Lobby **protocol v3**: rooms, phases, co-op shared stash, PvP vote/strikes/elimination, chat/voice relay | Fly (Dockerfile in `server/`) |
+| `server/room-server.mjs` | Lobby **protocol v4** (rooms, phases, matchmaking, chat/voice relay) | Fly (Dockerfile in `server/`) |
 
-- **WebSocket only** for lobby: no CORS issues for normal play. Add CORS if you expose HTTPS APIs later.
-- **Phases:** `lobby` → host **lock** → `locked` → host **launch** → `active`. Join rejected when not in `lobby`.
+- **WebSocket** for lobby: `wss://moba-rooms.fly.dev` in production.
 
 ---
 
-## Fly.io (room server) — review
+## Fly.io (room server)
 
-### One-time setup
+### One-time (already provisioned)
 
-1. Install [flyctl](https://fly.io/docs/hands-on/install-flyctl/) (`fly version` to verify).
-2. Log in: `fly auth login` (opens browser).
-3. This repo already has **`server/fly.toml`** (`app = "idle-craft-rooms"`) and **`server/Dockerfile`**.
-   - **New Fly app:** from `server/`, run `fly launch` once (follow prompts; align with this repo’s `fly.toml` / Dockerfile).
-   - **Existing app (usual case):** only **`fly deploy`** from `server/` — no `fly launch` each time.
+- **`server/fly.toml`** — `app = "moba-rooms"`.
+- **`server/Dockerfile`** — Node 22 Alpine, `PORT=8080`.
 
-### Every deploy (from repo)
+### Every deploy
 
-The Fly config and Dockerfile live under **`server/`**. Deploy **must** run with that directory as context (Fly reads `server/fly.toml`).
-
-**PowerShell (Windows):**
+**PowerShell:**
 
 ```powershell
-cd "C:\Users\Limin\idle deck\server"
+cd "C:\Users\Limin\MOBA\server"
 fly deploy
 ```
 
@@ -57,61 +52,54 @@ cd server
 fly deploy
 ```
 
-Fly builds the image (Node22 Alpine, `PORT=8080`, matches `internal_port` in `fly.toml`) and rolls out the app.
-
 ### Verify
 
+**PowerShell** (preferred on Windows):
+
 ```powershell
-curl https://idle-craft-rooms.fly.dev/health
+Invoke-WebRequest -Uri "https://moba-rooms.fly.dev/health" -UseBasicParsing | Select-Object -ExpandProperty Content
 ```
 
-Expect plain text: `ok`.
-
-Optional: `fly status -a idle-craft-rooms` and `fly logs -a idle-craft-rooms`.
-
-### If the lobby looks “down” from the browser
-
-- Cold start: `fly.toml` allows **scale to zero**; first connection after idle can take a few seconds.
-- Wrong URL: production builds use **`wss://idle-craft-rooms.fly.dev`** (see `netlify.toml`). If you rename the Fly app, update `VITE_ROOM_WS_URL` everywhere and redeploy Netlify.
+Optional: `fly status -a moba-rooms`, `fly logs -a moba-rooms`.
 
 ### Secrets
 
-This room server does not require Fly secrets for the current feature set. If you add API keys later, use `fly secrets set KEY=value` in `server/` context.
+```powershell
+fly secrets set MOBA_3V3_QUEUE_SIZE=6 -a moba-rooms
+```
 
 ---
 
 ## Netlify (game)
 
-**Typical site name:** `idle-crafting` → **https://idle-crafting.netlify.app**. Your machine may be linked to a different site; run **`netlify status`** from the repo root to see the **Production URL** and **Site name** actually in use.
-
-1. Build: `npm run build` (root) — `netlify.toml` sets `VITE_ROOM_WS_URL=wss://idle-craft-rooms.fly.dev` for production builds.
-2. Deploy: upload **`dist/`** (not repo root).
+1. Build: `npm run build` (root) — `VITE_ROOM_WS_URL` from `netlify.toml`.
+2. Deploy: **`dist/`** to site **moba-magic-atoms**.
 
 ### Netlify CLI
 
-**One-time:** `npm install -g netlify-cli` → `netlify login` → from repo root `netlify link --name idle-crafting`.
-
-**Production deploy (recommended):**
+**Production:**
 
 ```powershell
-cd "C:\Users\Limin\idle deck"
+cd "C:\Users\Limin\MOBA"
 npm run deploy:netlify
 ```
 
-Equivalent to `npm run build` then `netlify deploy --dir=dist --prod`.
+**Check link:**
 
-**Preview only (draft URL):**
+```powershell
+netlify status
+```
+
+**Preview:**
 
 ```powershell
 npm run build
 netlify deploy --dir=dist
 ```
 
-**Git-connected site:** pushes can auto-build; CLI is still useful to ship an exact local `dist/` immediately.
+### After Fly hostname or env changes
 
-### After Fly URL or env changes
-
-Update **`netlify.toml`** `[build.environment] VITE_ROOM_WS_URL` and **`.env.production`** if present, then redeploy Netlify. You do **not** need to change this when only the Netlify site domain changes — only when the **room server** host changes.
+Update **`netlify.toml`** `[build.environment] VITE_ROOM_WS_URL`, **`.env.production`**, and **`PROD_LOBBY_WSS`** in `src/net/roomHub.ts` and `roomHubBridge.ts`, then redeploy Netlify.
 
 ---
 
@@ -122,20 +110,19 @@ Update **`netlify.toml`** `[build.environment] VITE_ROOM_WS_URL` and **`.env.pro
 | Game | `npm run dev` → http://localhost:3000 |
 | Lobby | `npm run rooms` or `cd server && npm start` → **ws://localhost:3334** |
 
-Repo root **`.env.local`:** `VITE_ROOM_WS_URL=ws://localhost:3334` (optional; dev fallback in code targets port 3334).
+**`.env.local`:** `VITE_ROOM_WS_URL=ws://localhost:3334` (optional).
 
 ---
 
 ## Go-live checklist
 
-1. **Fly:** `cd server` → `fly deploy` → `curl …/health` → `ok`.
-2. **Netlify:** `npm run deploy:netlify` (or push to git if CI builds).
-3. **Smoke:** Open Netlify URL → online mode → lobby connects → create/join room → chat/voice if testing.
+1. **Fly:** `cd server` → `fly deploy` → `/health` → `ok`.
+2. **Netlify:** `npm run deploy:netlify` (or push with CI).
+3. **Smoke:** Open **https://moba-magic-atoms.netlify.app** → online → lobby / queue → WS connects.
 
 ---
 
-## Research notes (concise)
+## References
 
-- **Fly:** Docker + `fly.toml`; single region (`iad` in this repo) keeps WS latency predictable.
-- **Netlify:** Static SPA; realtime authority stays on Fly.
-- Official: [Netlify env + build](https://docs.netlify.com/environment-variables/overview/), [Fly deploy](https://fly.io/docs/flyctl/deploy/).
+- [Netlify env + build](https://docs.netlify.com/environment-variables/overview/)
+- [Fly deploy](https://fly.io/docs/flyctl/deploy/)

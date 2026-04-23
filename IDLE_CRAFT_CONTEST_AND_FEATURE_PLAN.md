@@ -1,5 +1,7 @@
 # IDLE-CRAFT — Complete contest and feature plan
 
+> **MOBA fork:** Production hosting for this repo is **Netlify [moba-magic-atoms.netlify.app](https://moba-magic-atoms.netlify.app)** + **Fly [moba-rooms.fly.dev](https://moba-rooms.fly.dev)** — see [`docs/MOBA_HOSTING_SETUP.md`](docs/MOBA_HOSTING_SETUP.md). Paragraphs below that still say “idle-crafting” / `idle-craft-rooms` describe the **original IDLE-CRAFT** stack, not MOBA.
+
 Single consolidated plan combining: **Vibe Jam 2026** requirements, **Portal** tab + enter animation, **solo battle** presentation (enemies + gear rules), and the full **multiplayer / contest** roadmap (Fly, modes, lobbies, UI, characters, viewport, poses, props).
 
 **Architecture anchors:** [GAME_MASTER.md](./GAME_MASTER.md) · [src/core/gameStore.ts](./src/core/gameStore.ts) · [src/ui/mountApp.ts](./src/ui/mountApp.ts) · [src/visual/characterScenePreview.ts](./src/visual/characterScenePreview.ts) · [index.html](./index.html) · [netlify.toml](./netlify.toml)
@@ -40,7 +42,7 @@ Single consolidated plan combining: **Vibe Jam 2026** requirements, **Portal** t
 - **Seeded world:** server owns seed + room id; clients receive seed for deterministic debugging.
 - **Authority:** server validates anything competitive (PvP, shared coop economy).
 
-**Status:** **Done (ops)** — static game on Netlify (**idle-crafting**), lobby WebSocket on Fly (`wss://idle-craft-rooms.fly.dev`), protocol v2. Further research only if you add new regions or HTTPS APIs with CORS.
+**Status:** **Done (ops)** for IDLE-CRAFT — static game on Netlify (**idle-crafting**), lobby on Fly (`wss://idle-craft-rooms.fly.dev`). **MOBA** uses **moba-magic-atoms.netlify.app** + **moba-rooms.fly.dev** (protocol v4 in this tree). Further research only if you add new regions or HTTPS APIs with CORS.
 
 ### B2. Server and protocol
 

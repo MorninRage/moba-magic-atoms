@@ -1,6 +1,10 @@
-# MOBA / IDLE-CRAFT room server
+# MOBA room server (Fly)
 
 Node **WebSocket** hub for **co-op / PvP / 3v3** lobbies: up to **6 players**, **phases** (`lobby` → `locked` → `active`), **deterministic seed** per room, **browse + create + join + queue**.
+
+**Production:** Fly app **`moba-rooms`** — [https://moba-rooms.fly.dev](https://moba-rooms.fly.dev) · **`GET /health`** → `ok` · WebSocket **`wss://moba-rooms.fly.dev`**.
+
+**Deploy:** from this folder, `fly deploy` (see root [`docs/MOBA_HOSTING_SETUP.md`](../docs/MOBA_HOSTING_SETUP.md)).
 
 **Protocol v4:** `deathmatch` **FIFO matchmaking** drains the queue in batches of **6** (configurable via `MOBA_3V3_QUEUE_SIZE`). **`pvp`** drains **2** at a time. Messages: `queueLeave`, `left_queue`, `queue_status` includes `queueSize`.
 

@@ -1,4 +1,4 @@
-# Site: MOBA — target https://moba.netlify.app (create site + custom domain in Netlify dashboard)
+# Site: MOBA — production https://moba-magic-atoms.netlify.app (GitHub: MorninRage/moba-magic-atoms)
 [build]
   command = "npm run build"
   publish = "dist"

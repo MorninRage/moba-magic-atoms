@@ -2,6 +2,16 @@
 
 This doc is the **runbook** for splitting **Magic Orbiting Brandished Atoms** fully away from IDLE-CRAFT: **new Git repo**, **new Netlify site**, **new Fly app**, plus **what to build next** after matchmaking finds a match.
 
+### Implemented (2026-04-23)
+
+| Piece | Value |
+|--------|--------|
+| Git | [github.com/MorninRage/moba-magic-atoms](https://github.com/MorninRage/moba-magic-atoms) (`main`) |
+| Netlify | [moba-magic-atoms.netlify.app](https://moba-magic-atoms.netlify.app) |
+| Fly | [moba-rooms.fly.dev](https://moba-rooms.fly.dev) · WSS `wss://moba-rooms.fly.dev` |
+
+**Exact update commands:** [`MOBA_HOSTING_SETUP.md`](./MOBA_HOSTING_SETUP.md).
+
 ---
 
 ## 0. Two games, two stacks (IDLE-CRAFT unchanged)
@@ -11,8 +21,8 @@ You are building **two separate products**. They do **not** have to share hostin
 | | **IDLE-CRAFT** (existing) | **MOBA** (new) |
 |--|---------------------------|----------------|
 | **Git** | Current idle-deck repo — **leave as-is** | **New repo** — copy MOBA tree; no requirement to link remotes |
-| **Netlify** | e.g. `idle-craft1.netlify.app` — **unchanged** | **New site** — e.g. `moba.netlify.app` |
-| **Fly (rooms)** | e.g. `idle-craft-rooms.fly.dev` — **unchanged** | **New Fly app** — e.g. `moba-rooms.fly.dev` |
+| **Netlify** | e.g. `idle-craft1.netlify.app` — **unchanged** | **moba-magic-atoms.netlify.app** (live) |
+| **Fly (rooms)** | e.g. `idle-craft-rooms.fly.dev` — **unchanged** | **moba-rooms.fly.dev** (live) |
 | **Env** | Existing `VITE_ROOM_WS_URL` if any | **Must** set `VITE_ROOM_WS_URL=wss://<moba-fly-app>.fly.dev` on MOBA Netlify |
 | **Players** | Old URL → old lobby server | New URL → **only** MOBA queue/rooms |
 
@@ -34,11 +44,11 @@ That line in `package.json` means: “look for a folder named `EmpireEngine` **n
 
 ---
 
-## 2. Netlify (site name **MOBA**)
+## 2. Netlify (site **moba-magic-atoms**)
 
 | Item | Notes |
 |------|--------|
-| **Site name** | Create site in Netlify dashboard; try **`moba`** → URL **`https://moba.netlify.app`** if available (Netlify assigns on first create; if taken, use `moba-magic-atoms` or similar). |
+| **Site** | **https://moba-magic-atoms.netlify.app** — slug **`moba-magic-atoms`**, team **`morninrage`**. Link GitHub **MorninRage/moba-magic-atoms** in the dashboard for CI builds. |
 | **Build** | Root = game repo root. **Build command:** `npm run build`. **Publish directory:** `dist`. |
 | **Node** | Match `netlify.toml` / `NODE_VERSION` (e.g. 20) with local. |
 | **Env vars** | **`VITE_ROOM_WS_URL`** = `wss://<your-fly-app>.fly.dev` (production room server). Do **not** rely on dev fallback in production. |
@@ -52,7 +62,7 @@ That line in `package.json` means: “look for a folder named `EmpireEngine` **n
 |------|--------|
 | **Deploy** | From MOBA repo **`server/`** (Dockerfile + `fly.toml`). |
 | **App name** | Use a **new** Fly app (e.g. `moba-rooms`) — **do not** reuse `idle-craft-rooms` if you want IDLE-CRAFT’s lobby to keep working exactly as today on its own URL. |
-| **Client** | In MOBA, set **`fly.toml` `app`** to the new name; set Netlify **`VITE_ROOM_WS_URL`** to `wss://<new-app>.fly.dev`. Optionally change the **fallback** URL in [`src/net/roomHub.ts`](../src/net/roomHub.ts) / [`roomHubBridge.ts`](../src/net/roomHubBridge.ts) from `idle-craft-rooms` to your MOBA host so production builds without env still hit the right server (env should override in Netlify). |
+| **Client** | Done: **`moba-rooms`**, **`wss://moba-rooms.fly.dev`** in `fly.toml`, `netlify.toml`, `.env.production`, and **`PROD_LOBBY_WSS`** in [`src/net/roomHub.ts`](../src/net/roomHub.ts) / [`roomHubBridge.ts`](../src/net/roomHubBridge.ts). |
 | **Health** | `GET /health` → `ok` (used by platforms / smoke tests). |
 | **Optional env** | `MOBA_3V3_QUEUE_SIZE=6` (default is 6). |
 

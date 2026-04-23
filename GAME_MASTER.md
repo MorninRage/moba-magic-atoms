@@ -41,7 +41,7 @@ The **playable loop** lives in **`src/`** (TypeScript): inventory, crafting, dec
 
 **Build plugin:** `vite.config.ts` copies `project.json`, `scenes/`, `recipes/`, `data/`, `assets/` into `dist/` on bundle close (for deployment / editor-adjacent workflows).
 
-**Contest (VibeJam 2026):** `index.html` loads `https://vibej.am/2026/widget.js` (async) for entrant tracking. Ship the web build on **one stable origin** (Netlify site **idle-crafting** → **https://idle-crafting.netlify.app**, or a custom domain on that site) so popularity tracking stays valid. Players only need the browser link; the hosted build connects to the Fly lobby automatically — no local server or CLI steps for players.
+**Contest (VibeJam 2026):** `index.html` loads `https://vibej.am/2026/widget.js` (async) for entrant tracking. Ship the MOBA web build on **one stable origin** — production is **https://moba-magic-atoms.netlify.app** (Netlify project **moba-magic-atoms**); lobby WebSocket **wss://moba-rooms.fly.dev**. Use [`docs/MOBA_HOSTING_SETUP.md`](docs/MOBA_HOSTING_SETUP.md) for deploy commands. (IDLE-CRAFT sibling uses its own Netlify/Fly URLs.)
 
 **Portals (optional jam feature):** On the **Portal** tab, the 3D `portal_enter` clip ends with a **full navigation** to `https://vibej.am/portal/2026` with query params (`ref`, `hp`, etc.) — the hub assigns the **next** game. See [jam portals section](https://vibej.am/2026). Incoming `?portal=true` adds a body class for styling.
 

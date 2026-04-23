@@ -6,7 +6,17 @@
 
 **Vibe Jam 2026** — see [vibej.am/2026](https://vibej.am/2026) (widget + portals TBD for this deploy origin).
 
-**Deploy (Git + Netlify + Fly):** [`docs/MOBA_HOSTING_SETUP.md`](docs/MOBA_HOSTING_SETUP.md). **Repo split + post-match flow:** [`docs/MOBA_DEPLOY_REPO_AND_POST_MATCH_FLOW.md`](docs/MOBA_DEPLOY_REPO_AND_POST_MATCH_FLOW.md).
+**Deploy (Git + Netlify + Fly):** [`docs/MOBA_HOSTING_SETUP.md`](docs/MOBA_HOSTING_SETUP.md) — **exact commands** for push, Fly, Netlify. **Repo split + post-match flow:** [`docs/MOBA_DEPLOY_REPO_AND_POST_MATCH_FLOW.md`](docs/MOBA_DEPLOY_REPO_AND_POST_MATCH_FLOW.md).
+
+### Production (live)
+
+| | URL |
+|--|-----|
+| **Play** | [moba-magic-atoms.netlify.app](https://moba-magic-atoms.netlify.app) |
+| **GitHub** | [github.com/MorninRage/moba-magic-atoms](https://github.com/MorninRage/moba-magic-atoms) |
+| **Lobby (WSS)** | `wss://moba-rooms.fly.dev` — HTTPS [moba-rooms.fly.dev](https://moba-rooms.fly.dev) |
+
+**Routine ship:** `git push origin main` (if Netlify CI linked) → or `npm run deploy:netlify`; after server changes → `npm run deploy:fly` first. Full copy-paste steps in [`docs/MOBA_HOSTING_SETUP.md`](docs/MOBA_HOSTING_SETUP.md).
 
 ![Screenshot placeholder — replace after MOBA shell ships](./jam-game-screenshot.jpg)
 
@@ -44,8 +54,8 @@ The IDLE-CRAFT premise (Vanguard, Mira, deck curse) lives in [`LORE.md`](./LORE.
 | Language | TypeScript ~5.7 |
 | Bundler / dev server | Vite 5 (port 3000) |
 | 3D | `three` ^0.182 — procedural LPCA avatar, equipment, environment |
-| State | `GameStore` class, `localStorage` persistence (`idle-deck-fusion-v1`) |
-| Static deploy | Netlify (target [`moba.netlify.app`](https://moba.netlify.app)) |
+| State | `GameStore` class, `localStorage` persistence (`moba-magic-atoms-save-v1`) |
+| Static deploy | Netlify [**moba-magic-atoms.netlify.app**](https://moba-magic-atoms.netlify.app) |
 | Lobby server | Fly.io Node WebSocket (`wss://moba-rooms.fly.dev`) |
 | Cutscenes | Pollinations FLUX + ComfyUI Depthflow + Piper TTS + Remotion (zero-cost) |
 
@@ -56,7 +66,7 @@ The IDLE-CRAFT premise (Vanguard, Mira, deck curse) lives in [`LORE.md`](./LORE.
 ## Getting started
 
 ### Play in browser
-Just open [idle-craft1.netlify.app](https://idle-craft1.netlify.app). Nothing to install.
+Open **[moba-magic-atoms.netlify.app](https://moba-magic-atoms.netlify.app)**. Nothing to install.
 
 ### Run locally
 
@@ -84,19 +94,26 @@ npm run preview    # serve dist/ locally to spot-check
 
 ### Deploy
 
-```bash
-npm run deploy:netlify   # build + push dist/ to Netlify
-npm run deploy:fly       # deploy lobby server to Fly.io
+From repo root (see [`docs/MOBA_HOSTING_SETUP.md`](./docs/MOBA_HOSTING_SETUP.md) for paths and CI):
+
+```powershell
+# Client (Netlify production)
+npm run deploy:netlify
+
+# Room server (Fly) — run after protocol / server changes
+npm run deploy:fly
 ```
 
-Full deploy notes in [`docs/DEPLOY.md`](./docs/DEPLOY.md).
+**Git:** `git add -A`, `git commit -m "…"`, `git push origin main`.
+
+Full checklist: [`docs/DEPLOY.md`](./docs/DEPLOY.md).
 
 ---
 
 ## Project layout
 
 ```
-idle-craft/
+moba-magic-atoms/
 ├── src/
 │   ├── main.ts                       # boot: title flow → click → game shell (cutscenes unwired 2026-04-22; see session doc)
 │   ├── core/
@@ -149,7 +166,8 @@ The codebase is heavily documented to support agent-assisted development. Key en
 | [`LORE.md`](./LORE.md) | Narrative bible: characters, palette, voice, three-act arc |
 | [`PLAN.md`](./PLAN.md) | Delivered phases, battle tuning, death/UI checklist |
 | [`LEARNINGS.md`](./LEARNINGS.md) | Non-trivial fixes — read before re-debugging similar issues |
-| [`docs/DEPLOY.md`](./docs/DEPLOY.md) | Netlify + Fly deploy commands and URLs |
+| [`docs/MOBA_HOSTING_SETUP.md`](./docs/MOBA_HOSTING_SETUP.md) | **Production URLs + exact Git / Fly / Netlify commands** |
+| [`docs/DEPLOY.md`](./docs/DEPLOY.md) | MOBA deploy checklist (Netlify + Fly) |
 | [`docs/CUTSCENE_PIPELINE.md`](./docs/CUTSCENE_PIPELINE.md) | Zero-cost cutscene production recipe |
 | [`docs/LPCA_IDLE_CRAFT_REFERENCE.md`](./docs/LPCA_IDLE_CRAFT_REFERENCE.md) | Procedural geometry pipeline |
 | [`docs/MULTIPLAYER_ROADMAP.md`](./docs/MULTIPLAYER_ROADMAP.md) | Lobby/co-op/PvP roadmap |
