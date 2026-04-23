@@ -2,6 +2,8 @@
 
 **Goal:** Executable checklist from current IDLE-CRAFT fork → playable match slice. Update this file as tasks complete.
 
+**MOBA repo scope:** **`C:\Users\Limin\MOBA`** — online UI is **3v3 only** (`deathmatch`). Co-op caravan and Hunter (1v1) are **not** offered in the start flow; the server may still speak protocol for other modes, but this product does not surface them.
+
 **Enough to start?** **Yes.** Specs in [`MOBA_V1_GAMEPLAN.md`](./MOBA_V1_GAMEPLAN.md), forge loop in [`MOBA_FORGE_WORKBENCH_BRAINSTORM.md`](./MOBA_FORGE_WORKBENCH_BRAINSTORM.md), tuning postponed in [`MOBA_DEFERRED_TUNING.md`](./MOBA_DEFERRED_TUNING.md). Matchmaking: [`MOBA_MATCHMAKING.md`](./MOBA_MATCHMAKING.md). **New repo, Netlify MOBA, Fly deploy, testing, map + match entry:** [`MOBA_DEPLOY_REPO_AND_POST_MATCH_FLOW.md`](./MOBA_DEPLOY_REPO_AND_POST_MATCH_FLOW.md). **EmpireEngine monorepo/submodule/git-dep:** [`MOBA_EMPIRE_ENGINE_CI.md`](./MOBA_EMPIRE_ENGINE_CI.md).
 
 ---

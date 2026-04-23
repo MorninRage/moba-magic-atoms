@@ -1,6 +1,6 @@
 /**
- * Pre-shell start flow: title → mode (solo + locked online) → survivor preset → main game.
- * Visual standard: layered PBR-adjacent 2D depth (see startFlow.css), on-brand forging / frontier.
+ * MOBA start flow: title → mode (**solo practice** or **3v3 online**) → hero preset → game or lobby.
+ * This repo is not IDLE-CRAFT: online play is **deathmatch (3v3)** only — no co-op caravan or Hunter 1v1 in UI.
  */
 import type { CharacterPresetId, GameMode } from '../core/types';
 import { CHARACTER_PRESETS } from '../data/characterPresets';
@@ -83,8 +83,8 @@ export function mountStartFlow(root: HTMLElement, store: GameStore, opts: MountS
               <p class="start-kicker">Vibe Jam 2026 · MOBA — Magic Orbiting Brandished Atoms</p>
               <h1 class="start-title">MOBA</h1>
               <p class="start-sub">
-                3v3 magic brawl on the procedural forest — matchmaking on Fly.io. Solo idle expedition is still here
-                under Expedition mode; use <strong>Find 3v3 match</strong> or <code>?queue=3v3</code> to jump the queue after you pick a hero.
+                <strong>3v3</strong> magic brawl on the procedural forest — FIFO matchmaking on Fly.io. <strong>Solo</strong> is local practice
+                (same 3D shell, no lobby). Use <strong>Find 3v3 match</strong> or <code>?queue=3v3</code> after you pick a hero.
               </p>
             </div>
           </div>
@@ -103,28 +103,25 @@ export function mountStartFlow(root: HTMLElement, store: GameStore, opts: MountS
             </span>
           </div>
           <p class="start-footer-note">
-            Online: Hunter duel (1v1) and Forge clash (3v3) use the lobby server — 3v3 fills a six-player FIFO pool then
-            assigns teams A/B. No installs; just this link. Add <code>?queue=3v3</code> to auto-enter matchmaking after hero select.
+            Online is <strong>3v3 only</strong> — six players queue, then teams A/B, ready, host launch. Add <code>?queue=3v3</code> to auto-queue after hero select.
           </p>
           <p class="start-footer-note start-footer-note--room" hidden data-room-hub-status></p>
         </div>
 
         <div class="start-step" data-step="mode">
           <button type="button" class="start-btn start-btn--neon-ghost start-btn--back" data-back="title">← Back</button>
-          <h2 class="start-step-h">Expedition mode</h2>
+          <h2 class="start-step-h">How do you want to play?</h2>
           <p class="start-step-p">
-            Solo uses your local save and the full idle loop. Online modes open a lobby (browse, create, queue) then launch
-            when the host starts — run sync is still local-first; the server owns seed and phases.
+            <strong>Solo</strong> — local save, practice in the 3D forest. <strong>3v3 online</strong> — lobby, find match or room code, then host launches; server owns seed and phases.
           </p>
           <div class="start-grid" data-mode-grid></div>
         </div>
 
         <div class="start-step" data-step="character">
           <button type="button" class="start-btn start-btn--neon-ghost start-btn--back" data-back="mode">← Back</button>
-          <h2 class="start-step-h">Survivor silhouette</h2>
+          <h2 class="start-step-h">Hero</h2>
           <p class="start-step-p">
-            Eight procedural presets — same dock rig and LPCA palette pass (including four new silhouettes).
-            Your pick is saved on this device.
+            Procedural presets — LPCA dock rig. Your pick is saved on this device.
           </p>
           <div class="start-grid" data-char-grid></div>
           <div class="start-actions">
@@ -152,8 +149,8 @@ export function mountStartFlow(root: HTMLElement, store: GameStore, opts: MountS
   let selectedMode: GameMode = 'solo';
   let selectedChar: CharacterPresetId | null = null;
   const urlQueue = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '').get('queue');
-  /** After character confirm, lobby auto-joins FIFO matchmaking (3v3 or 1v1). */
-  let autoJoinQueueNextLobby = urlQueue === '3v3' || urlQueue === 'deathmatch' || urlQueue === '1v1';
+  /** After character confirm, lobby auto-joins 3v3 FIFO matchmaking only. */
+  let autoJoinQueueNextLobby = urlQueue === '3v3' || urlQueue === 'deathmatch';
 
   function showStep(s: StepId): void {
     (Object.keys(steps) as StepId[]).forEach((k) => {
@@ -372,23 +369,13 @@ export function mountStartFlow(root: HTMLElement, store: GameStore, opts: MountS
   const modes: { id: GameMode; title: string; desc: string }[] = [
     {
       id: 'solo',
-      title: 'Solo frontier',
-      desc: 'Full idle loop, gather clips, craft stations, PvE battle dock, permadeath stakes.',
-    },
-    {
-      id: 'coop',
-      title: 'Co-op caravan',
-      desc: 'Shared camp stash on the server, rooms + seed + phases. PvE battles; coordinate in lobby chat or voice.',
-    },
-    {
-      id: 'pvp',
-      title: 'Hunter duel',
-      desc: '1v1 lobby: queue or browse rooms, party vote to duel, rival in the procedural dock — Hunter PvP pacing.',
+      title: 'Solo practice',
+      desc: 'Local save — explore the 3D forest, combat, and systems without matchmaking.',
     },
     {
       id: 'deathmatch',
-      title: 'Forge clash (3v3)',
-      desc: 'FIFO public matchmaking: when six players are waiting, the server forms a room, alternates teams, then ready + host lock + launch.',
+      title: '3v3 online',
+      desc: 'FIFO matchmaking: six players → teams A/B → ready, host lock, launch. Browse or create a room instead if you prefer.',
     },
   ];
 
@@ -397,7 +384,7 @@ export function mountStartFlow(root: HTMLElement, store: GameStore, opts: MountS
     card.type = 'button';
     card.className = 'start-card start-card--playable';
     card.innerHTML = `
-      <div class="start-card-meta">${m.id === 'solo' ? 'Local save' : 'Online lobby'}</div>
+      <div class="start-card-meta">${m.id === 'solo' ? 'Local' : 'Fly.io lobby · 3v3'}</div>
       <h3 class="start-card-title">${m.title}</h3>
       <p class="start-card-desc">${m.desc}</p>
     `;
@@ -461,19 +448,13 @@ export function mountStartFlow(root: HTMLElement, store: GameStore, opts: MountS
       const lobbyRoot = wrap.querySelector('[data-online-lobby-root]') as HTMLElement;
       lobbyRoot.replaceChildren();
       if (autoJoinQueueNextLobby) {
-        if (urlQueue === '3v3' || urlQueue === 'deathmatch') {
-          selectedMode = 'deathmatch';
-          store.setGameMode('deathmatch');
-        } else if (urlQueue === '1v1' || urlQueue === 'pvp') {
-          selectedMode = 'pvp';
-          store.setGameMode('pvp');
-        }
+        selectedMode = 'deathmatch';
+        store.setGameMode('deathmatch');
       }
       onlineLobbyCleanup = await mountOnlineLobby(lobbyRoot, {
         gameMode: selectedMode,
         characterPresetId: selectedChar,
-        autoJoinQueue:
-          autoJoinQueueNextLobby && (selectedMode === 'deathmatch' || selectedMode === 'pvp'),
+        autoJoinQueue: autoJoinQueueNextLobby && selectedMode === 'deathmatch',
         onBack: () => {
           onlineLobbyCleanup?.({ leaveRoom: true });
           onlineLobbyCleanup = null;
@@ -508,7 +489,7 @@ export function mountStartFlow(root: HTMLElement, store: GameStore, opts: MountS
     titleRoomHubUnsub = getRoomHub().subscribeConnection((state, detail) => {
       if (state === 'open') {
         roomStatusEl.textContent =
-          'Online lobby is ready — choose co-op caravan, Hunter duel, or Forge clash under Expedition mode to play with others.';
+          'Online lobby is ready — pick 3v3 online (or Find 3v3 match on the title) to queue.';
       } else if (state === 'connecting') {
         roomStatusEl.textContent = 'Connecting to the online lobby…';
       } else if (state === 'error') {

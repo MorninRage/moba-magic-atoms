@@ -43,7 +43,7 @@ The IDLE-CRAFT premise (Vanguard, Mira, deck curse) lives in [`LORE.md`](./LORE.
 - **Procedural Three.js character dock** — LPCA (Layered Procedural Construction Approach) avatar, gear meshes, page-aware poses, blood VFX, enemy procedural meshes (rat, wolf, deserter)
 - **Two zero-cost cinematic cutscenes** — `intro_the_curse` (51s) + `intro_the_shattering` (76s), produced via the pipeline in [`docs/CUTSCENE_PIPELINE.md`](./docs/CUTSCENE_PIPELINE.md). _Currently unwired from the boot graph as of 2026-04-22; files preserved on disk for a one-commit revert. See [`docs/SESSION_2026_04_22_CUTSCENE_REMOVAL_AND_BOOT_TIGHTENING.md`](./docs/SESSION_2026_04_22_CUTSCENE_REMOVAL_AND_BOOT_TIGHTENING.md)._
 - **Vibe Jam portal** — exit redirect to the official jam hub with `ref` / `username` / `color` / `hp` continuity params
-- **Online lobby** (Fly.io WebSocket) — co-op caravans, Hunter duels, Forge clash deathmatches; chat + voice relay; up to 6 players per room
+- **Online lobby** (Fly.io WebSocket) — **3v3 matchmaking** (six-player FIFO, teams A/B); chat + voice relay; up to 6 players per room
 
 ---
 

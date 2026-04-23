@@ -1,5 +1,5 @@
 /**
- * Online lobby: browse/create/join, queue for PvP/deathmatch, ready + host lock/start, six-avatar stage.
+ * MOBA online lobby: browse/create/join, **3v3 (deathmatch)** queue, ready + host lock/start, six-avatar stage.
  */
 import type { CharacterPresetId, GameMode } from '../core/types';
 import { getRoomHub } from '../net/roomHubBridge';
@@ -28,7 +28,7 @@ export type MountOnlineLobbyOptions = {
   onBack: () => void;
   /** Called when the host moves the room to `active` — start the shared expedition locally. */
   onEnterGame: (session: OnlineLaunchSession) => void;
-  /** After connect, immediately `queueJoin` (3v3 / Hunter). For Vibe Jam “land and queue” flows. */
+  /** After connect, immediately `queueJoin` for 3v3. */
   autoJoinQueue?: boolean;
 };
 
@@ -190,21 +190,14 @@ export async function mountOnlineLobby(
   nameInput.value = localStorage.getItem(DISPLAY_NAME_KEY) ?? 'Survivor';
 
   modeDesc.textContent =
-    opts.gameMode === 'coop'
-      ? 'Create or join a room with friends. When the host launches the run, everyone gets a fresh expedition — same survival loop; use chat or voice to coordinate.'
-      : opts.gameMode === 'pvp'
-        ? 'Queue for a match or join a room. After launch, play a hunter-style duel run: full idle crafting and battle dock, tuned for competitive pacing.'
-        : 'Up to six survivors, teams A or B (three each). When the host locks and launches, everyone starts the same style of run from a shared room code.';
+    opts.gameMode === 'deathmatch'
+      ? 'Up to six players, teams A/B (three each). Queue for a public match or use a room code. When the host locks and launches, everyone enters the same MOBA run (shared seed).'
+      : 'Create or join a room. When the host launches, everyone enters the run from this lobby.';
 
-  if (opts.gameMode === 'pvp' || opts.gameMode === 'deathmatch') {
+  if (opts.gameMode === 'deathmatch') {
     teamRow.hidden = false;
-    if (opts.gameMode === 'pvp') {
-      teamRowLabel.textContent = '1v1';
-      teamPickWrap.hidden = true;
-    } else {
-      teamRowLabel.textContent = 'Team (assigned at match found)';
-      teamPickWrap.hidden = true;
-    }
+    teamRowLabel.textContent = 'Team (assigned at match found)';
+    teamPickWrap.hidden = true;
     queueBtn.hidden = false;
     leaveQueueBtn.hidden = false;
     queueMeta.hidden = false;
@@ -462,7 +455,7 @@ export async function mountOnlineLobby(
   });
 
   let autoJoinUnsub: (() => void) | null = null;
-  if (opts.autoJoinQueue && (opts.gameMode === 'pvp' || opts.gameMode === 'deathmatch')) {
+  if (opts.autoJoinQueue && opts.gameMode === 'deathmatch') {
     let fired = false;
     const runAutoQueue = (): void => {
       if (fired) return;
