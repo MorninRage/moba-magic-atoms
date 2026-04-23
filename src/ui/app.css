@@ -1910,6 +1910,11 @@ body.vibejam-from-portal {
 /* Awakened-realm chip — small persistent indicator in awakened mode.
  * Phase A used this as the only visual; Phase C adds WASD + nav hiding + Tab overlay
  * but the chip stays as a clear status reminder. */
+/* Online MOBA match from Fly lobby — distinct status chip (room id on `data-moba-room`). */
+#app-shell.realm-awakened.moba-match::after {
+  content: 'MOBA MATCH  ·  Tab menu';
+}
+
 #app-shell.realm-awakened::after {
   content: 'AWAKENED  ·  press Tab for menu';
   position: fixed;

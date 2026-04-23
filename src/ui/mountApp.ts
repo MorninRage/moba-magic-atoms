@@ -2488,6 +2488,17 @@ export async function mountApp(root: HTMLElement, store: GameStore, opts?: Mount
     }
   }) as EventListener);
 
+  function syncMobaMatchChrome(): void {
+    const os = store.getStateRef().onlineSession;
+    const isMoba = os?.sessionKind === 'moba_match';
+    shell.classList.toggle('moba-match', isMoba);
+    if (isMoba && os) {
+      shell.dataset.mobaRoom = os.roomId;
+    } else {
+      delete shell.dataset.mobaRoom;
+    }
+  }
+
   store.subscribe(() => {
     refreshHud();
     syncPvpVoteOverlay();
@@ -2589,6 +2600,7 @@ export async function mountApp(root: HTMLElement, store: GameStore, opts?: Mount
       realmMatchDeferred = true;
     }
     applyRealmModeToNav();
+    syncMobaMatchChrome();
     /* If the awakened panel is showing a deck page, re-render the BODY only on every
      * emit — chrome (header / back / X) stays in place so focus, scroll, and event
      * listeners on those elements aren't blown away. Cheap update, parallel to deck-mode's
@@ -2597,6 +2609,7 @@ export async function mountApp(root: HTMLElement, store: GameStore, opts?: Mount
       renderAwakenedPanelBody(awakenedPanelView);
     }
   });
+  syncMobaMatchChrome();
 
   /**
    * Cheap "near water" check — samples a ring around `(ax, az)` and returns true if any

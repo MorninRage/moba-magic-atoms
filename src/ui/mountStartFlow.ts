@@ -314,6 +314,7 @@ export function mountStartFlow(root: HTMLElement, store: GameStore, opts: MountS
     cont.textContent = 'Continue expedition';
     cont.addEventListener('click', () => {
       commitToPlay();
+      store.resumeIntoMobaShell();
       opts.onEnterGame();
     });
     titleActions.appendChild(cont);
@@ -452,6 +453,7 @@ export function mountStartFlow(root: HTMLElement, store: GameStore, opts: MountS
       store.setGameMode(selectedMode);
       if (selectedMode === 'solo') {
         store.clearOnlineSession();
+        store.beginSoloMobaMatch();
         opts.onEnterGame();
         return;
       }
@@ -480,7 +482,7 @@ export function mountStartFlow(root: HTMLElement, store: GameStore, opts: MountS
         onEnterGame: (session) => {
           onlineLobbyCleanup?.({ leaveRoom: false });
           onlineLobbyCleanup = null;
-          store.beginOnlineSession(session);
+          store.beginOnlineSession({ ...session, sessionKind: 'moba_match' });
           opts.onEnterGame();
         },
       });

@@ -189,6 +189,11 @@ export interface EquipmentState {
 export type OnlineSessionMeta = {
   roomId: string;
   seed: number;
+  /**
+   * MOBA fork: online launch goes straight to awakened 3D (no idle deck shell).
+   * Omitted / `'idle_online'` preserves legacy co-op expedition behavior.
+   */
+  sessionKind?: 'moba_match' | 'idle_online';
   /** 3v3 / deathmatch team from lobby (optional). */
   team?: 0 | 1;
   /** Display names of everyone who was in the room at launch (co-op / social). */

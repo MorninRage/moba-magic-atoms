@@ -133,10 +133,10 @@ Today, **`onEnterGame`** in [`src/ui/mountOnlineLobby.ts`](../src/ui/mountOnline
 
 | Step | Work |
 |------|------|
-| **A** | Add **`beginMobaOnlineSession(session)`** (or extend `beginOnlineSession`) that sets a flag and **skips** idle nav; boot **directly** into awakened-style 3D with MOBA HUD shell. |
-| **B** | **`mountMobaMatch.ts`** (new): owns canvas, `CharacterScenePreview` or host, `freeRoamControls`, and reads **`seed`** for procedural params. |
-| **C** | **Map v0** — tune `project.json` / terrain aspect for **lane length**; place **team spawn** + **forge/workbench** volumes from constants or small **`mobaMap.json`**. |
-| **D** | **Gate old UI** — if `sessionKind === 'moba_match'`, `mountApp` does not render gather/craft/deck pages (or bypass `mountApp` entirely for match route). |
+| **A** | **Done:** `beginOnlineSession({ …, sessionKind: 'moba_match' })` sets `realmMode: 'awakened'` + skips tutorial noise; **`beginSoloMobaMatch`** + **`resumeIntoMobaShell`** (Continue) for local/legacy saves. Still uses `mountApp` + existing awakened pipeline. |
+| **B** | **`mountMobaMatch.ts`** — deferred; current path reuses `mountApp` / `CharacterScenePreview` / `freeRoamControls` after realm flip. |
+| **C** | **Started:** `src/moba/mobaMapConfig.ts` constants; terrain/spawn wiring next. |
+| **D** | **Partial:** awakened CSS hides deck nav; `.moba-match` chip for online matches. Tab overlay still exposes deck pages when needed. |
 | **E** | **Multiplayer replication** — positions/casts/objectives sync (thin server or host-authoritative); out of scope for first vertical slice but hooks should live next to match entry. |
 
 ### 6.3 Files likely touched

@@ -1267,9 +1267,15 @@ export class GameStore {
     this.state.onlineSession = {
       roomId: meta.roomId,
       seed: meta.seed,
+      ...(meta.sessionKind ? { sessionKind: meta.sessionKind } : {}),
       ...(meta.team !== undefined ? { team: meta.team } : {}),
       ...(meta.partyRoster && meta.partyRoster.length > 0 ? { partyRoster: [...meta.partyRoster] } : {}),
+      ...(meta.pvpRival ? { pvpRival: { ...meta.pvpRival } } : {}),
     };
+    if (meta.sessionKind === 'moba_match') {
+      this.state.realmMode = 'awakened';
+      this.state.tutorial = { version: 1, status: 'skipped', stepId: 'intro' };
+    }
     this.lastCoopRevApplied = -1;
     this.remotePresence.clear();
     this.lastRoomPlayers = [];
@@ -1277,6 +1283,46 @@ export class GameStore {
     this.lastPvpStrikeSeqSeen = 0;
     this.pvpDuelInvitePrompt = null;
     this.emit();
+  }
+
+  /**
+   * Local MOBA vertical slice: same awakened entry as `sessionKind: 'moba_match'` but
+   * without a lobby session (practice / solo from the start flow).
+   */
+  beginSoloMobaMatch(): void {
+    const preset = this.state.characterPresetId;
+    this.state = createInitialState();
+    this.state.gameMode = 'solo';
+    this.state.characterPresetId = preset;
+    this.state.realmMode = 'awakened';
+    this.state.tutorial = { version: 1, status: 'skipped', stepId: 'intro' };
+    this.lastCoopRevApplied = -1;
+    this.remotePresence.clear();
+    this.lastRoomPlayers = [];
+    this.lastRoomHostSessionId = null;
+    this.lastPvpStrikeSeqSeen = 0;
+    this.pvpDuelInvitePrompt = null;
+    this.emit();
+  }
+
+  /**
+   * Title **Continue** path: older IDLE-shaped saves may still have `realmMode: 'deck'`.
+   * MOBA always resumes into the awakened 3D shell.
+   */
+  resumeIntoMobaShell(): void {
+    let changed = false;
+    if (this.state.realmMode !== 'awakened') {
+      this.state.realmMode = 'awakened';
+      changed = true;
+    }
+    if (this.state.tutorial.status === 'not_started' || this.state.tutorial.status === 'active') {
+      this.state.tutorial = { version: 1, status: 'skipped', stepId: 'intro' };
+      changed = true;
+    }
+    if (changed) {
+      saveState(this.state);
+      this.emit();
+    }
   }
 
   clearOnlineSession(): void {

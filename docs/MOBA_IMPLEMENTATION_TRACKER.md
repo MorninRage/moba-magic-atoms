@@ -8,8 +8,8 @@
 
 ## Phase A — Shell & single-player vertical slice
 
-- [ ] **A1** Strip or bypass dream/deck UI: boot into “match” or minimal lobby (no gather/craft idle tabs).
-- [ ] **A2** Force `realmMode` / equivalent to always use **3D match** path (free roam + HUD).
+- [x] **A1** Strip or bypass dream/deck UI: new runs + Continue call `resumeIntoMobaShell()`; online launch uses `sessionKind: 'moba_match'` → `realmMode: 'awakened'` (fullscreen 3D + Tab menu; idle nav hidden).
+- [x] **A2** Force **3D match** path for MOBA: `beginSoloMobaMatch`, `beginOnlineSession({ sessionKind: 'moba_match' })`, and Continue shim above.
 - [ ] **A3** Magic-only combat path: hide sword/axe/pick; keep staff melee + spells.
 - [ ] **A4** HUD: HP, Mana, XP (stub level), optional placeholder for mat inventory.
 - [ ] **A5** One team’s **forge + workbench** props in base zone + **interaction trigger** (no full recipe graph yet).
@@ -38,7 +38,7 @@
 
 ## Phase E — Jam / ship
 
-- [ ] **E1** Separate deploy origin, widget, title strings.
+- [x] **E1** Separate deploy origin (Netlify **moba-magic-atoms** + Fly **moba-rooms**); widget in `index.html`; title MOBA copy in start flow.
 - [ ] **E2** Perf pass on forest + combat; defer worker path if unstable.
 
 ---
@@ -47,3 +47,4 @@
 
 - [x] Fork repo to `C:\Users\Limin\MOBA`, branding, storage keys isolated from IDLE-CRAFT.
 - [x] `npm run build` passes on fork.
+- [x] **Post-match entry (§6):** `OnlineSessionMeta.sessionKind`, `beginOnlineSession` + `beginSoloMobaMatch` + `resumeIntoMobaShell`; `#app-shell.moba-match` status chip; `src/moba/mobaMapConfig.ts` stub for map v0.
