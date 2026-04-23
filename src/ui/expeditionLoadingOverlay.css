@@ -1,0 +1,303 @@
+/**
+ * Expedition load veil — matches Idle Craft shell: game-shell-bg whisper, forged metal (--metal-*),
+ * hex-chamfer meter (truncated “rivet plate” ends), radiant PBR fill + scan.
+ */
+.expedition-loading {
+  --eload-cut: clamp(10px, 2.8vw, 14px);
+  --metal-deep: #0d0f14;
+  --metal-mid: #2a3142;
+  --metal-rim: #5c6578;
+  --eload-ice: #7ec8ff;
+  --eload-gold: #e8b060;
+  --eload-ember: #c4783a;
+
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 2rem;
+  box-sizing: border-box;
+  font-family: var(--font-display, system-ui, sans-serif);
+  /* Shorter exit fade so Vibe Jam entry feels snappy once the prewarmed scene is mounted. */
+  transition: opacity 0.22s ease-out, visibility 0.22s ease-out;
+
+  /* Cool key + warm bounce — matches game-shell-bg mood (texture whisper via ::before) */
+  background:
+    radial-gradient(ellipse 115% 82% at 50% 14%, rgba(48, 82, 125, 0.42) 0%, transparent 56%),
+    radial-gradient(ellipse 88% 52% at 82% 88%, rgba(190, 120, 58, 0.14) 0%, transparent 48%),
+    linear-gradient(168deg, #06080c 0%, #0e141c 46%, #080a0e 100%);
+}
+
+/* Same asset as in-game shell — barely visible forge grain */
+.expedition-loading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--expedition-shell-texture, none) center / cover no-repeat;
+  opacity: 0.072;
+  mix-blend-mode: soft-light;
+}
+
+.expedition-loading--out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.expedition-loading__mesh {
+  position: absolute;
+  inset: 0;
+  opacity: 0.055;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 72% 58% at 50% 42%, black 0%, transparent 75%);
+}
+
+.expedition-loading__panel {
+  position: relative;
+  z-index: 1;
+  width: min(28rem, 92vw);
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid rgba(120, 150, 185, 0.22);
+  background: linear-gradient(175deg, rgba(24, 32, 44, 0.94) 0%, rgba(10, 13, 18, 0.97) 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.55) inset,
+    0 22px 56px rgba(0, 0, 0, 0.58),
+    0 1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
+.expedition-loading__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.35rem;
+}
+
+.expedition-loading__mark {
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgba(100, 180, 255, 0.4));
+}
+
+.expedition-loading__titles {
+  flex: 1;
+  min-width: 0;
+}
+
+.expedition-loading__kicker {
+  margin: 0;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(175, 200, 225, 0.62);
+}
+
+.expedition-loading__title {
+  margin: 0.1rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: linear-gradient(92deg, #c8e8ff 0%, #f0d090 52%, #9fd4ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.expedition-loading__status {
+  margin: 0.75rem 0 0.5rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(210, 225, 240, 0.9);
+  min-height: 2.6em;
+}
+
+/* ─── Forged hex plate meter (flat top/bottom, angled sides → truncated gem ends) ─── */
+.eload-meter {
+  position: relative;
+  margin: 0.35rem 0 0.15rem;
+  padding: 0 0.15rem;
+  filter: drop-shadow(0 0 18px rgba(70, 140, 210, 0.45)) drop-shadow(0 0 42px rgba(220, 160, 80, 0.12));
+}
+
+.eload-meter__bloom {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 108%;
+  height: 280%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse closest-side at 50% 50%,
+    rgba(100, 170, 240, 0.28) 0%,
+    rgba(210, 150, 70, 0.08) 42%,
+    transparent 72%
+  );
+  animation: eload-breathe 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eload-meter__bloom {
+    animation: none;
+    opacity: 0.55;
+  }
+
+  .eload-meter__scan {
+    animation: none !important;
+    opacity: 0.28;
+  }
+}
+
+@keyframes eload-breathe {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.04);
+  }
+}
+
+.eload-meter__track {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  min-height: 1.35rem;
+  padding: 4px;
+  box-sizing: border-box;
+  clip-path: polygon(
+    var(--eload-cut) 0%,
+    calc(100% - var(--eload-cut)) 0%,
+    100% 50%,
+    calc(100% - var(--eload-cut)) 100%,
+    var(--eload-cut) 100%,
+    0% 50%
+  );
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.03) 38%, transparent 52%),
+    linear-gradient(168deg, #3d465c 0%, var(--metal-mid) 38%, var(--metal-deep) 72%, #080a0e 100%);
+  box-shadow:
+    inset 0 3px 14px rgba(0, 0, 0, 0.88),
+    inset 0 2px 4px rgba(0, 0, 0, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(130, 155, 185, 0.18) inset;
+}
+
+.eload-meter__fill {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  transform-origin: left center;
+  transform: scaleX(0);
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.06) 28%, transparent 46%),
+    linear-gradient(
+      95deg,
+      #1a3a5c 0%,
+      #3d7ab8 18%,
+      var(--eload-ice) 42%,
+      var(--eload-gold) 58%,
+      #d4944a 78%,
+      #5aa8d8 100%
+    );
+  box-shadow:
+    0 0 16px rgba(120, 200, 255, 0.55),
+    0 0 28px rgba(240, 190, 100, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.35);
+  transition: transform 0.22s ease-out;
+}
+
+.eload-meter__scan {
+  position: absolute;
+  z-index: 2;
+  inset: 4px;
+  clip-path: polygon(
+    var(--eload-cut) 0%,
+    calc(100% - var(--eload-cut)) 0%,
+    100% 50%,
+    calc(100% - var(--eload-cut)) 100%,
+    var(--eload-cut) 100%,
+    0% 50%
+  );
+  background: linear-gradient(
+    102deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 38%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0) 62%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: eload-scan 2.4s ease-in-out infinite;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+@keyframes eload-scan {
+  0% {
+    background-position: 130% 0;
+  }
+  100% {
+    background-position: -130% 0;
+  }
+}
+
+/* Leading-edge hot spot follows perceived “fill” — width tied via opacity pulse only (visual polish) */
+.eload-meter__hotspot {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 8%;
+  width: 18%;
+  height: 55%;
+  transform: translateY(-50%);
+  background: radial-gradient(ellipse at 30% 50%, rgba(255, 245, 220, 0.5) 0%, transparent 68%);
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  pointer-events: none;
+  animation: eload-hotspot 2s ease-in-out infinite;
+}
+
+@keyframes eload-hotspot {
+  0%,
+  100% {
+    opacity: 0.55;
+    filter: blur(0.5px);
+  }
+  50% {
+    opacity: 0.95;
+    filter: blur(1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eload-meter__hotspot {
+    animation: none;
+    opacity: 0.65;
+  }
+}
+
+.expedition-loading__pct {
+  margin-top: 0.55rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(140, 165, 195, 0.52);
+  font-variant-numeric: tabular-nums;
+}

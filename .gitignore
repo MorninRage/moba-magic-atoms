@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+out/
+build/out/
+
+# Vite cache
+.vite/
+
+# Netlify CLI cache (plugin downloads + state)
+.netlify/
+
+# EmpireEditor live dev-server port file (written by vite empirePortWriter plugin per machine)
+.empire/
+
+# Local jam preview frame dumps (auto-generated)
+jam_preview/
+
+# Per-machine env overrides (committed: .env.development, .env.production, .env.example)
+.env.local
+.env.*.local
+
+# Cursor / local agent state (not part of the game)
+.cursor/
+.agent/
+
+# Editor / OS junk
+.DS_Store
+Thumbs.db
+*.log
+
+# Electron Forge packaging output
+out/
+
+# Optional npm pack output
+*.tgz

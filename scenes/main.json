@@ -1,0 +1,23 @@
+{
+  "name": "Main Scene",
+  "description": "",
+  "camera": {
+    "position": [
+      0,
+      5,
+      10
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ]
+  },
+  "time": 21,
+  "weather": {
+    "type": "clear",
+    "intensity": 0
+  },
+  "entities": [],
+  "modified": "2026-04-23T14:57:18.611Z"
+}

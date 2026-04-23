@@ -1,0 +1,95 @@
+# Site: MOBA — target https://moba.netlify.app (create site + custom domain in Netlify dashboard)
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Lobby WebSocket (Fly MOBA app). Matches `.env.production`; override in Netlify UI if the Fly app name differs.
+  VITE_ROOM_WS_URL = "wss://moba-rooms.fly.dev"
+
+# === 2026-04-21 Preload Round 4 — caching strategy ===
+#
+# Vite emits `dist/assets/*` with content hashes in the filename (e.g.
+# `index-CmptL0up.js`), so a deploy that changes the bytes also changes the
+# URL. Mark those eternally cacheable with the `immutable` directive — no
+# revalidation round-trip on any future visit. Without this, Netlify's default
+# `Cache-Control: public, max-age=0, must-revalidate` forced a 304 round-trip
+# on every refresh against assets that haven't changed.
+#
+# `index.html` is the OPPOSITE: it MUST always be revalidated, because its
+# body references the hashed asset URLs. If a stale cached `index.html`
+# pointed at no-longer-existing JS hashes after a deploy, the player would
+# see a blank screen — `no-cache` (not `no-store`) lets the browser cache the
+# bytes but always check freshness via If-Modified-Since.
+#
+# Music lives under /audio/ (NOT hashed by Vite — shipped from `public/`).
+# Match `immutable` for it too because the content is intentionally stable;
+# replacing a track re-copies it on the next Vite build and the SW
+# (registered separately) picks up new bytes via runtime cache invalidation.
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/audio/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Service worker MUST never be long-cached or you can't ship a new one.
+# `Service-Worker-Allowed` widens its scope to the site root.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Service-Worker-Allowed = "/"
+
+# Workbox runtime imports — small, change with the SW version.
+[[headers]]
+  for = "/workbox-*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# === 2026-04-22 OffscreenCanvas worker — COOP/COEP for SharedArrayBuffer ===
+#
+# `SharedArrayBuffer` (used by `src/worker/sharedState.ts` to back the cross-
+# thread state ring) is gated by browsers behind cross-origin isolation. To
+# enable it, the document must be served with:
+#
+#   - `Cross-Origin-Opener-Policy: same-origin`
+#   - `Cross-Origin-Embedder-Policy: credentialless` (or `require-corp`)
+#
+# We use `credentialless` instead of `require-corp` for one reason: the page
+# loads no-credentials cross-origin resources from third parties that DON'T
+# send `Cross-Origin-Resource-Policy` headers — namely Google Fonts
+# (`fonts.googleapis.com`, `fonts.gstatic.com`) and the Vibe Jam widget
+# (`vibej.am`). `require-corp` would block those; `credentialless` lets them
+# through as long as they're loaded without credentials.
+#
+# `credentialless` is supported in Chrome 96+, Edge 96+, Firefox 110+, and
+# Safari 17.4+. Older Safari falls back via the capability gate in
+# `src/main.ts`, which checks `crossOriginIsolated` + `SharedArrayBuffer` at
+# boot and shows an "update your browser" message if missing.
+#
+# Headers apply to the HTML shell + the JS chunks (the worker module is
+# fetched as JS). Static assets like images and fonts don't need them.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "credentialless"
+
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "credentialless"
+
+# SPA shell: real files (assets/, audio/, etc.) are served first; unknown paths get index.html.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

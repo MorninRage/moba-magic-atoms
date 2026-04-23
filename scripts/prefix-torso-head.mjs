@@ -1,0 +1,10 @@
+import fs from 'fs';
+let s = fs.readFileSync('src/visual/_dock_rig.txt', 'utf8');
+s = s.replace(/\btorso\./g, 'rig.torso.');
+s = s.replace(/\bheadRoot\./g, 'rig.headRoot.');
+s = s.replace(/\bhatGroup\./g, 'rig.hatGroup.');
+s = s.replace(/\bsmithBandanaGroup\./g, 'rig.smithBandanaGroup.');
+s = s.replace(/\bglassesGroup\./g, 'rig.glassesGroup.');
+s = s.replace(/\bmaleDockFaceList\./g, 'rig.maleDockFaceList.');
+s = s.replace(/rig\.rig\./g, 'rig.');
+fs.writeFileSync('src/visual/_dock_rig.txt', s);

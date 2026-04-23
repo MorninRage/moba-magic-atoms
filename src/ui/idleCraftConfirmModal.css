@@ -1,0 +1,261 @@
+/* Custom confirm — SpaceBell-style neon glass + glowing CTAs (no native confirm()) */
+
+.idlecraft-confirm {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 4vw, 2rem);
+  box-sizing: border-box;
+  font-family: var(--font-ui);
+  animation: idlecraft-confirm-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes idlecraft-confirm-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.idlecraft-confirm__backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(79, 195, 247, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 80% 90%, rgba(156, 39, 176, 0.08) 0%, transparent 45%),
+    rgba(4, 8, 18, 0.78);
+  backdrop-filter: blur(10px) saturate(1.15);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
+  cursor: pointer;
+}
+
+.idlecraft-confirm__panel {
+  position: relative;
+  width: min(420px, 100%);
+  padding: 1.5rem 1.65rem 1.35rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(129, 212, 250, 0.35);
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.07) 0%, transparent 42%),
+    linear-gradient(180deg, rgba(14, 22, 42, 0.97) 0%, rgba(8, 12, 24, 0.99) 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 12px 48px rgba(0, 0, 0, 0.55),
+    0 0 64px rgba(79, 195, 247, 0.18),
+    0 0 96px rgba(129, 212, 250, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform-origin: 50% 60%;
+  animation: idlecraft-confirm-panel 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes idlecraft-confirm-panel {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.idlecraft-confirm__panel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(79, 195, 247, 0.4) 20%,
+    rgba(186, 104, 200, 0.55) 50%,
+    rgba(79, 195, 247, 0.4) 80%,
+    transparent 100%
+  );
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.idlecraft-confirm__panel::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(79, 195, 247, 0.12);
+  border-radius: calc(var(--radius-lg) - 8px);
+  pointer-events: none;
+}
+
+.idlecraft-confirm__kicker {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(129, 212, 250, 0.85);
+  text-shadow: 0 0 18px rgba(79, 195, 247, 0.45);
+}
+
+.idlecraft-confirm__title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: 1.28rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  color: #f0f7ff;
+  text-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.65),
+    0 0 28px rgba(79, 195, 247, 0.25);
+}
+
+.idlecraft-confirm__body {
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.idlecraft-confirm__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.idlecraft-confirm__btn {
+  appearance: none;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.7rem 1.35rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition:
+    transform 0.1s ease,
+    filter 0.1s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.idlecraft-confirm__btn:active {
+  transform: scale(0.982);
+  filter: brightness(1.06);
+}
+
+.idlecraft-confirm__btn:focus-visible {
+  outline: 2px solid rgba(129, 212, 250, 0.9);
+  outline-offset: 2px;
+}
+
+/* “Keep my expedition” — same cyan pill + blue pulse as Continue / non-destructive OK */
+.idlecraft-confirm__btn--cancel {
+  color: #061018;
+  border-color: rgba(186, 104, 200, 0.45);
+  background: linear-gradient(175deg, #e1f5fe 0%, #4fc3f7 38%, #0288d1 72%, #01579b 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 6px rgba(0, 40, 80, 0.35),
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    0 0 28px rgba(79, 195, 247, 0.55),
+    0 0 48px rgba(129, 212, 250, 0.35);
+  animation: idlecraft-confirm-glow 2.4s ease-in-out infinite;
+}
+
+.idlecraft-confirm__btn--cancel:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -2px 6px rgba(0, 40, 80, 0.3),
+    0 6px 28px rgba(0, 0, 0, 0.45),
+    0 0 36px rgba(79, 195, 247, 0.7),
+    0 0 64px rgba(186, 104, 200, 0.35);
+}
+
+.idlecraft-confirm__btn--ok {
+  color: #061018;
+  border-color: rgba(186, 104, 200, 0.45);
+  background: linear-gradient(175deg, #e1f5fe 0%, #4fc3f7 38%, #0288d1 72%, #01579b 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 6px rgba(0, 40, 80, 0.35),
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    0 0 28px rgba(79, 195, 247, 0.55),
+    0 0 48px rgba(129, 212, 250, 0.35);
+  animation: idlecraft-confirm-glow 2.4s ease-in-out infinite;
+}
+
+.idlecraft-confirm__btn--ok:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -2px 6px rgba(0, 40, 80, 0.3),
+    0 6px 28px rgba(0, 0, 0, 0.45),
+    0 0 36px rgba(79, 195, 247, 0.7),
+    0 0 64px rgba(186, 104, 200, 0.35);
+}
+
+.idlecraft-confirm__btn--ok.idlecraft-confirm__btn--danger {
+  border-color: rgba(212, 88, 88, 0.55);
+  background: linear-gradient(175deg, #ffe8e8 0%, #f48fb1 32%, #c62828 70%, #6d1010 100%);
+  color: #fff8f8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  animation: idlecraft-confirm-glow-danger 2.4s ease-in-out infinite;
+}
+
+.idlecraft-confirm__btn--ok.idlecraft-confirm__btn--danger:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 6px 28px rgba(0, 0, 0, 0.45),
+    0 0 40px rgba(244, 143, 177, 0.45),
+    0 0 56px rgba(198, 40, 40, 0.35);
+}
+
+@keyframes idlecraft-confirm-glow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      inset 0 -2px 6px rgba(0, 40, 80, 0.35),
+      0 4px 20px rgba(0, 0, 0, 0.4),
+      0 0 28px rgba(79, 195, 247, 0.5),
+      0 0 48px rgba(129, 212, 250, 0.3);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      inset 0 -2px 6px rgba(0, 40, 80, 0.32),
+      0 4px 22px rgba(0, 0, 0, 0.42),
+      0 0 40px rgba(186, 104, 200, 0.45),
+      0 0 72px rgba(79, 195, 247, 0.4);
+  }
+}
+
+@keyframes idlecraft-confirm-glow-danger {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.35),
+      0 4px 20px rgba(0, 0, 0, 0.4),
+      0 0 28px rgba(244, 143, 177, 0.4),
+      0 0 44px rgba(198, 40, 40, 0.3);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      0 4px 22px rgba(0, 0, 0, 0.42),
+      0 0 40px rgba(255, 100, 100, 0.45),
+      0 0 60px rgba(198, 40, 40, 0.35);
+  }
+}

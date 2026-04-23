@@ -1,0 +1,707 @@
+/* ESC — full-screen pause / settings: hero art + neon glass (parity with start + confirm modals) */
+
+.system-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.75rem, 3vw, 2rem);
+  box-sizing: border-box;
+  font-family: var(--font-ui);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.28s linear;
+}
+
+.system-menu--open {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+}
+
+.system-menu__bg-stack {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.system-menu__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 45%;
+  transform: scale(1.03);
+  filter: saturate(1.05) contrast(1.04);
+}
+
+.system-menu__vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 42%, transparent 18%, rgba(0, 0, 0, 0.5) 55%, rgba(2, 4, 10, 0.88) 100%),
+    linear-gradient(180deg, rgba(8, 14, 28, 0.5) 0%, transparent 22%, transparent 78%, rgba(4, 8, 18, 0.75) 100%);
+  mix-blend-mode: multiply;
+}
+
+.system-menu__scanlines {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.4) 2px,
+    rgba(0, 0, 0, 0.4) 3px
+  );
+  pointer-events: none;
+}
+
+.system-menu__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(4, 8, 18, 0.25);
+  backdrop-filter: blur(6px) saturate(1.1);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  margin: 0;
+  appearance: none;
+}
+
+.system-menu__panel {
+  position: relative;
+  z-index: 2;
+  width: min(440px, 100%);
+  max-height: min(92vh, 720px);
+  overflow: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(129, 212, 250, 0.38);
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.08) 0%, transparent 42%),
+    linear-gradient(180deg, rgba(14, 22, 42, 0.96) 0%, rgba(6, 10, 20, 0.98) 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.55),
+    0 16px 56px rgba(0, 0, 0, 0.55),
+    0 0 64px rgba(79, 195, 247, 0.14),
+    0 0 96px rgba(186, 104, 200, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  padding: 1.35rem 1.5rem 1.2rem;
+  animation: system-menu-panel-in 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes system-menu-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.system-menu__panel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(79, 195, 247, 0.45) 22%,
+    rgba(186, 104, 200, 0.55) 50%,
+    rgba(232, 165, 75, 0.35) 78%,
+    transparent 100%
+  );
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.system-menu__kicker {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(129, 212, 250, 0.88);
+  text-shadow: 0 0 16px rgba(79, 195, 247, 0.4);
+}
+
+.system-menu__title {
+  margin: 0 0 1rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #f2f8ff;
+  text-shadow:
+    0 2px 14px rgba(0, 0, 0, 0.65),
+    0 0 28px rgba(79, 195, 247, 0.22);
+}
+
+.system-menu__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 1.1rem;
+}
+
+.system-menu__camera-block {
+  margin: 0 0 1.15rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(129, 212, 250, 0.22);
+  background: rgba(6, 12, 24, 0.55);
+}
+
+.system-menu__camera-list {
+  margin: 0 0 0.65rem;
+  padding-left: 1.1rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: rgba(226, 236, 255, 0.88);
+}
+
+.system-menu__camera-list li {
+  margin: 0.35rem 0;
+}
+
+.system-menu__camera-list strong {
+  color: #b3e5fc;
+  font-weight: 650;
+}
+
+/* === Controls reference panel ===
+ *
+ * Same chrome as `__camera-block` (subtle cyan-tinted card on dark glass)
+ * but with a stack of collapsible <details> sections, one per gameplay
+ * mode. Inside each section a 2-column grid pairs a `<kbd>`-styled key
+ * chip with a plain-text action description, line-wrapping the action
+ * cell on narrow screens (mobile FAB-opened menu). */
+.system-menu__controls-block {
+  margin: 0 0 1.15rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(129, 212, 250, 0.22);
+  background: rgba(6, 12, 24, 0.55);
+}
+.system-menu__controls-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.45rem;
+}
+.system-menu__controls-section {
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid rgba(129, 212, 250, 0.14);
+  background: rgba(10, 18, 32, 0.55);
+  padding: 0.45rem 0.7rem 0.55rem;
+}
+.system-menu__controls-section[open] {
+  background: rgba(12, 22, 40, 0.7);
+}
+.system-menu__controls-summary {
+  cursor: pointer;
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: #b3e5fc;
+  list-style: none;
+  padding: 0.15rem 0;
+  user-select: none;
+}
+.system-menu__controls-summary::-webkit-details-marker {
+  display: none;
+}
+.system-menu__controls-summary::before {
+  content: '▸';
+  display: inline-block;
+  width: 0.9rem;
+  font-size: 0.7rem;
+  color: rgba(129, 212, 250, 0.7);
+  transition: transform 0.15s ease-out;
+}
+.system-menu__controls-section[open] > .system-menu__controls-summary::before {
+  transform: rotate(90deg);
+}
+.system-menu__controls-blurb {
+  margin: 0.35rem 0 0.55rem;
+  padding-left: 0.9rem;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: rgba(200, 215, 235, 0.78);
+}
+.system-menu__controls-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 0.85rem;
+  row-gap: 0.32rem;
+  margin: 0;
+  padding: 0.15rem 0 0.1rem 0.9rem;
+  list-style: none;
+}
+.system-menu__controls-row {
+  display: contents;
+}
+.system-menu__controls-key {
+  display: inline-block;
+  min-width: 1.6rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid rgba(129, 212, 250, 0.32);
+  background: rgba(20, 32, 56, 0.85);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+  color: #e1f5fe;
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+.system-menu__controls-action {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: rgba(226, 236, 255, 0.92);
+  align-self: center;
+}
+.system-menu__controls-note {
+  color: rgba(176, 196, 226, 0.7);
+  font-size: 0.74rem;
+  font-style: italic;
+}
+@media (max-width: 540px) {
+  .system-menu__controls-list {
+    grid-template-columns: 1fr;
+    row-gap: 0.55rem;
+  }
+  .system-menu__controls-row {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 0.65rem;
+    align-items: baseline;
+  }
+}
+
+.system-menu__btn {
+  appearance: none;
+  cursor: pointer;
+  text-align: center;
+  padding: 0.62rem 1rem;
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.86rem;
+  letter-spacing: 0.04em;
+  border: 1px solid transparent;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    filter 0.15s ease;
+}
+
+.system-menu__btn:active {
+  transform: scale(0.985);
+}
+
+.system-menu__btn--primary {
+  color: #061018;
+  border-color: rgba(186, 104, 200, 0.45);
+  background: linear-gradient(175deg, #e1f5fe 0%, #4fc3f7 38%, #0288d1 72%, #01579b 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 4px 20px rgba(0, 0, 0, 0.35),
+    0 0 28px rgba(79, 195, 247, 0.45);
+  animation: system-menu-primary-glow 2.4s ease-in-out infinite;
+}
+
+.system-menu__btn--primary:hover {
+  filter: brightness(1.06);
+}
+
+@keyframes system-menu-primary-glow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 4px 20px rgba(0, 0, 0, 0.35),
+      0 0 28px rgba(79, 195, 247, 0.5),
+      0 0 48px rgba(129, 212, 250, 0.3);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 4px 22px rgba(0, 0, 0, 0.38),
+      0 0 40px rgba(186, 104, 200, 0.35),
+      0 0 72px rgba(79, 195, 247, 0.38);
+  }
+}
+
+.system-menu__btn--ghost {
+  color: #e8f4ff;
+  border-color: rgba(129, 212, 250, 0.4);
+  background: linear-gradient(175deg, rgba(28, 44, 68, 0.92) 0%, rgba(14, 22, 38, 0.9) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 24px rgba(79, 195, 247, 0.12);
+}
+
+.system-menu__btn--ghost:hover {
+  border-color: rgba(232, 165, 75, 0.45);
+  color: #fff8f0;
+}
+
+.system-menu__btn--danger {
+  color: #fff8f8;
+  border-color: rgba(212, 88, 88, 0.5);
+  background: linear-gradient(165deg, rgba(90, 32, 32, 0.75) 0%, rgba(28, 12, 14, 0.88) 100%);
+  box-shadow: 0 0 20px rgba(212, 88, 88, 0.2);
+}
+
+.system-menu__btn--danger:hover {
+  filter: brightness(1.08);
+}
+
+.system-menu__section-title {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(186, 104, 200, 0.85);
+}
+
+.system-menu__section-subtitle {
+  /* Quieter divider between related slider groups within a single block —
+   * e.g. "Ground-level lighting (Phase 8h)" inside the Lighting & color
+   * section. Tighter spacing + slightly muted accent so it reads as a
+   * sub-header, not a peer of `__section-title`. */
+  margin: 0.9rem 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(140, 200, 230, 0.78);
+}
+
+.system-menu__hint {
+  margin: 0 0 0.65rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.system-menu__graphics-pp {
+  margin: 0 0 1.15rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(129, 212, 250, 0.22);
+  background: rgba(6, 12, 24, 0.55);
+}
+
+.system-menu__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.55rem;
+  font-size: 0.78rem;
+  color: rgba(226, 236, 255, 0.92);
+}
+
+.system-menu__field > span {
+  color: rgba(186, 104, 200, 0.9);
+}
+
+.system-menu__select {
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(129, 212, 250, 0.35);
+  background: rgba(8, 14, 28, 0.9);
+  color: #e8f4ff;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+}
+
+.system-menu__checkline--help-toggle {
+  flex-wrap: wrap;
+  margin-bottom: 0.65rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid rgba(129, 212, 250, 0.15);
+  cursor: pointer;
+}
+
+.system-menu__graph-tip {
+  margin: 0;
+  padding: 0 0 0.35rem;
+  font-size: 0.64rem;
+  line-height: 1.4;
+  color: rgba(160, 188, 215, 0.92);
+  font-style: italic;
+  width: 100%;
+}
+
+.system-menu__preset-row[data-help-id] {
+  flex-wrap: wrap;
+}
+
+.system-menu__checkline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0.35rem 0;
+  font-size: 0.78rem;
+  color: rgba(226, 236, 255, 0.9);
+  cursor: pointer;
+}
+
+.system-menu__checkline input {
+  accent-color: #4fc3f7;
+}
+
+.system-menu__slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0.45rem 0;
+  font-size: 0.72rem;
+  color: rgba(200, 214, 235, 0.88);
+}
+
+.system-menu__slider-row > span {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.system-menu__slider-row input[type="range"] {
+  width: 100%;
+  accent-color: #4fc3f7;
+}
+
+.system-menu__slider-row output {
+  font-variant-numeric: tabular-nums;
+  color: rgba(129, 212, 250, 0.95);
+  font-size: 0.72rem;
+}
+
+.system-menu__hint--small {
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: rgba(180, 195, 215, 0.82);
+}
+
+.system-menu__hint--small code {
+  font-size: 0.65rem;
+  color: rgba(129, 212, 250, 0.88);
+}
+
+.system-menu__preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.system-menu__chip {
+  appearance: none;
+  cursor: pointer;
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(129, 212, 250, 0.35);
+  background: rgba(12, 20, 36, 0.85);
+  color: rgba(226, 236, 255, 0.92);
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.system-menu__chip:hover {
+  border-color: rgba(232, 165, 75, 0.45);
+  background: rgba(24, 32, 48, 0.92);
+}
+
+.system-menu__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.system-menu__links a {
+  color: rgba(129, 212, 250, 0.95);
+  font-size: 0.8rem;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(129, 212, 250, 0.25);
+  padding-bottom: 0.1rem;
+  width: fit-content;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.system-menu__links a:hover {
+  color: #fff8f0;
+  border-color: rgba(232, 165, 75, 0.45);
+}
+
+.system-menu__credits {
+  margin: 0;
+  padding: 0.55rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(129, 212, 250, 0.15);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.system-menu__credits ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.system-menu__credits li {
+  margin-bottom: 0.25rem;
+}
+
+.system-menu__credits a {
+  color: rgba(129, 212, 250, 0.9);
+}
+
+/* Touch / narrow viewports: Esc key substitute (see installSystemMenu). */
+.mobile-system-menu-fab {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .mobile-system-menu-fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: max(0.65rem, env(safe-area-inset-right));
+    bottom: max(0.65rem, env(safe-area-inset-bottom));
+    z-index: 11500;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0 0.65rem;
+    border-radius: var(--radius-md, 10px);
+    border: 1px solid rgba(186, 104, 200, 0.45);
+    background: linear-gradient(175deg, #1a2332 0%, #0e141f 100%);
+    color: var(--text, #e9ecf2);
+    font-family: var(--font-ui, system-ui, sans-serif);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    box-shadow:
+      0 4px 18px rgba(0, 0, 0, 0.45),
+      0 0 24px rgba(79, 195, 247, 0.25);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-system-menu-fab:active {
+    filter: brightness(1.08);
+  }
+}
+
+/* Performance section — live FPS readout block. */
+.system-menu__perf-readout {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  padding: 8px 12px;
+  margin: 6px 0 10px;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(120, 200, 140, 0.28);
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.system-menu__perf-fps {
+  color: #aef0b8;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.system-menu__perf-ms {
+  color: #b8c0c8;
+  font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .system-menu__panel {
+    animation: none;
+  }
+
+  .system-menu {
+    transition: opacity 0.15s ease;
+  }
+
+  .system-menu__btn--primary {
+    animation: none;
+  }
+
+  .system-menu__btn:active {
+    transform: none;
+  }
+}
+
+/* ============================================================================
+ * Controls reference popup — opens ON TOP of the Esc system menu.
+ *
+ * Re-uses the `system-menu` base classes for chrome (backdrop, panel, btn,
+ * controls-list rows). The `controls-popup` modifier here just bumps the
+ * z-index above the parent menu and widens the panel a little so the long
+ * "key + action" rows breathe. Closing the popup leaves the parent menu
+ * still visible underneath — see `installControlsPopup` in
+ * `systemMenuControlsPanel.ts` for the open/close lifecycle + Esc handling.
+ * ============================================================================ */
+
+.controls-popup {
+  /* Parent .system-menu sets z-index: 12000; sit one layer higher so the
+   * popup's backdrop dims the Esc menu's panel as well as the game world. */
+  z-index: 12100;
+}
+
+.controls-popup__panel {
+  /* Roomier than the Esc menu's narrow column so multi-line key bindings
+   * (e.g. "Right mouse (hold)") don't wrap awkwardly. Same max-height
+   * cap so the panel still fits on smaller screens with internal scroll. */
+  width: min(560px, 100%);
+}
+
+.controls-popup__stack {
+  /* Slightly tighter spacing than the inline panel had — the popup is
+   * dedicated to controls, so visual hierarchy can be denser. */
+  margin-top: 0.5rem;
+}
+
+.controls-popup__actions {
+  margin-top: 1rem;
+}
+

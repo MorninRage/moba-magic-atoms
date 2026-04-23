@@ -1,0 +1,172 @@
+{
+  "name": "IDLE-CRAFT",
+  "version": "1.0.0",
+  "engine": "EmpireEngine",
+  "created": "2026-04-06T18:54:31.225Z",
+  "modified": "2026-04-23T14:57:18.610Z",
+  "activeScene": "main",
+  "config": {
+    "graphics.fov": 60,
+    "graphics.renderScale": 1,
+    "graphics.shadowDistance": 80,
+    "graphics.exposure": 2.35,
+    "graphics.toneMapping": "ACESFilmic",
+    "graphics.outputColorSpace": "srgb",
+    "graphics.sunIntensity": 1.55,
+    "graphics.ambientBrightness": 1.35,
+    "graphics.hemisphereFill": 1.25,
+    "graphics.moonlightStrength": 1.85,
+    "graphics.cameraFill": 0.55,
+    "graphics.sunShafts": 0.55,
+    "graphics.envReflections": 0.85,
+    "graphics.nightGradeStrength": 1,
+    "physics.gravity": -28,
+    "physics.jumpVelocity": 11,
+    "physics.fallDamageScale": 1,
+    "postProcessing": {
+      "bloom": true,
+      "ssao": true,
+      "vignette": true,
+      "fxaa": true,
+      "bloomStrength": 0.32,
+      "bloomThreshold": 0.9,
+      "bloomRadius": 0.35,
+      "vignetteDarkness": 0.18,
+      "vignetteOffset": 1.2,
+      "ssaoIntensity": 0.18,
+      "ssaoKernelRadius": 1,
+      "ssaoMinDistance": 0.02,
+      "ssaoMaxDistance": 0.018,
+      "ssaoKernelSize": 12,
+      "ssaoResolutionScale": 1,
+      "fxaaStrength": 0.5
+    }
+  },
+  "time": 21,
+  "weather": {
+    "type": "clear",
+    "intensity": 0
+  },
+  "terrain": {
+    "radius": 44,
+    "planeSegments": 96,
+    "heightScale": 0.88,
+    "noiseFrequency": 0.088,
+    "skirtDepth": 1.35,
+    "carveFalloff": 1.05
+  },
+  "dock": {
+    "homeX": -0.85,
+    "homeZ": 2.65
+  },
+  "hydrology": {
+    "creeks": [
+      {
+        "id": "main",
+        "points": [
+          [
+            22,
+            -18
+          ],
+          [
+            14,
+            -10
+          ],
+          [
+            8,
+            -4
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            -2,
+            6
+          ],
+          [
+            -8,
+            12
+          ],
+          [
+            -16,
+            18
+          ],
+          [
+            -22,
+            22
+          ]
+        ],
+        "halfWidth": 0.46,
+        "carveDepth": 0.26,
+        "carveWidth": 1.55
+      },
+      {
+        "id": "north_fork",
+        "join": "main",
+        "joinT": 0.72,
+        "points": [
+          [
+            -20,
+            8
+          ],
+          [
+            -14,
+            6
+          ],
+          [
+            -10,
+            8
+          ],
+          [
+            -8,
+            11
+          ]
+        ],
+        "halfWidth": 0.32,
+        "carveDepth": 0.2,
+        "carveWidth": 1.12
+      },
+      {
+        "id": "east_fork",
+        "join": "main",
+        "joinT": 0.22,
+        "points": [
+          [
+            24,
+            6
+          ],
+          [
+            18,
+            2
+          ],
+          [
+            12,
+            -2
+          ]
+        ],
+        "halfWidth": 0.34,
+        "carveDepth": 0.2,
+        "carveWidth": 1.18
+      }
+    ]
+  },
+  "environment": {
+    "hourPerRealSecond": 0.072,
+    "nightDurationMul": 2,
+    "surfaceWaterDry": 0.08,
+    "surfaceWaterWet": 0.26,
+    "lunarCycleDays": 28,
+    "lunarPhase0": 0.22,
+    "lunarDayIndex": 0,
+    "plasmaSunEnabled": true,
+    "eclipticTiltDeg": 7,
+    "sky": {
+      "unified": true
+    }
+  },
+  "recipes": [],
+  "profiles": [],
+  "prefabs": [],
+  "scene": []
+}
